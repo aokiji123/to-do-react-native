@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react'
+import { View, ScrollView, Text } from 'react-native'
+import { Form } from './src/components/Form'
+import { NavBar } from './src/components/NavBar'
+import { ToDo } from './src/components/ToDo'
+import { globalStyles } from './src/styles/globalStyles'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [todos, setTodos] = useState([])
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  function addTodo(title) {
+    setTodos(prevTodos => [...prevTodos, {
+      id: Date.now().toString(),
+      title: title
+    }])
+  }
+
+  function removeToDo(id) {
+    setTodos(prev => prev.filter(todo => todo.id !== id))
+  }
+
+  return (
+    <View>
+      <NavBar title="To Do App!"/>
+
+      <ScrollView style={globalStyles.width}>
+        <Form onSubmit={addTodo}/>
+        {todos.map(todo => <ToDo todo={todo} key={todo.id} removeToDo={removeToDo}/>)}
+        <Text style={globalStyles.end}>Long Tap to delete</Text>
+      </ScrollView>
+    </View>
+  )
+}
